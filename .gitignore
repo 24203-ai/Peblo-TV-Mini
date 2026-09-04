@@ -1,0 +1,28 @@
+# Environment files
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.venv/
+backend/.venv/
+.pytest_cache/
+
+# Node and Frontend build outputs
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+
+# Generated catalogue
+assets/catalogue.json
+
+# Local editor files
+.vscode/
+
+# Backend generated/runtime assets
+backend/assets/

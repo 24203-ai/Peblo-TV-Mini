@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.13"
+        
+    - name: Set up Node.js 22
+      uses: actions/setup-node@v3
+      with:
+        node-version: "22"
+        
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest httpx
+        
+    - name: Run backend tests
+      run: |
+        cd backend
+        pytest tests/
+        
+    - name: Install CMS dependencies
+      run: cd frontend/cms && npm install
+      
+    - name: Lint and build CMS
+      run: |
+        cd frontend/cms
+        npm run lint
+        npm run build
+        
+    - name: Install Viewer dependencies
+      run: cd frontend/viewer && npm install
+      
+    - name: Lint and build Viewer
+      run: |
+        cd frontend/viewer
+        npm run lint
+        npm run build
+        
+    - name: Test Docker Compose build
+      run: docker compose build
