@@ -4,7 +4,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.api.deps import get_current_active_admin, get_current_user
+
 from app.models.publish_run import PublishRun
 from app.services.publish_validation import validate_for_publish
 from app.services.catalogue_builder import build_catalogue
@@ -20,7 +20,7 @@ class PublishResult(BaseModel):
     error_log: dict
 
 @router.post("/", response_model=PublishResult)
-def trigger_publish(db: Session = Depends(get_db), current_user = Depends(get_current_active_admin)):
+def trigger_publish(db: Session = Depends(get_db)):
     # 1. Run validation
     problems = validate_for_publish(db)
     
@@ -29,7 +29,7 @@ def trigger_publish(db: Session = Depends(get_db), current_user = Depends(get_cu
     
     run = PublishRun(
         id=str(uuid.uuid4()),
-        initiated_by=current_user.id,
+        initiated_by="system",
         status=status,
         error_info={"problems": problems} if problems else {}
     )
@@ -63,11 +63,11 @@ def trigger_publish(db: Session = Depends(get_db), current_user = Depends(get_cu
     }
 
 @router.get("/runs", response_model=List[PublishResult])
-def get_publish_runs(db: Session = Depends(get_db), current_user = Depends(get_current_user), limit: int = 20):
+def get_publish_runs(db: Session = Depends(get_db), limit: int = 20):
     return db.query(PublishRun).order_by(PublishRun.started_at.desc()).limit(limit).all()
 
 @router.get("/validation-report")
-def get_validation_report(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+def get_validation_report(db: Session = Depends(get_db)):
     """
     Returns all CURRENT publish-blocking problems, grouped for editors.
     Editors can view this to fix content before an admin publishes.
