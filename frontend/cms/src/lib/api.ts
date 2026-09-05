@@ -1,19 +1,7 @@
 import axios from 'axios';
 
-let baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/admin';
-
-// Automatically detect GitHub Codespaces environment
-if (typeof window !== 'undefined' && window.location.hostname.endsWith('.github.dev')) {
-  // If we are on port 3000 (CMS) in Codespaces, the backend is on port 8000.
-  // The hostname looks like: some-codespace-name-3000.app.github.dev
-  const host = window.location.hostname;
-  if (host.includes('-3000')) {
-    baseURL = `https://${host.replace('-3000', '-8000')}/admin`;
-  }
-}
-
 const api = axios.create({
-  baseURL,
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/admin',
   headers: {
     'Content-Type': 'application/json',
   },

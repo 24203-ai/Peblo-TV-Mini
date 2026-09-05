@@ -34,6 +34,8 @@ services:
   cms:
     build:
       context: ./frontend/cms
+      args:
+        VITE_API_URL: http://localhost:8000/admin
     ports:
       - "3000:80"
     depends_on:
