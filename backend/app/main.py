@@ -1,9 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.orm import Session
+from app.db.database import get_db
 from app.api import auth, shows, seasons, episodes, artwork, publish, catalog
 import os
-
 app = FastAPI(
     title="Peblo TV Mini API",
     version="1.0.0",
@@ -34,5 +35,18 @@ os.makedirs(assets_dir, exist_ok=True)
 app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
 @app.get("/health")
-def health_check() -> dict[str, str]:
+def health_check(db: Session = Depends(get_db)) -> dict[str, str]:
+    """
+    Health check endpoint.
+    Alerting Reasoning: In production, we would alert on the failure rate of this endpoint 
+    dropping below 99.9% over a 5-minute rolling window, or if latency spikes above 500ms. 
+    This is because this endpoint verifies core API responsiveness and database connectivity (via Depends(get_db)). 
+    If this fails, the CMS cannot save content and the publish job cannot run, meaning a critical outage.
+    """
+    try:
+        # Simple query to verify DB connection is alive
+        db.execute("SELECT 1")
+    except Exception as e:
+        raise HTTPException(status_code=503, detail="Database connection failed")
+        
     return {"status": "healthy"}

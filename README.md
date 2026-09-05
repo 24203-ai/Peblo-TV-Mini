@@ -30,16 +30,17 @@ The Peblo TV Mini CMS is designed for internal company use and does not provide 
 
 ### Why a Published Catalogue?
 The viewer needs to be highly available, cacheable, and incredibly fast. Instead of the viewer hitting the PostgreSQL database (which handles complex relations and validation rules), we generate a static `catalogue.json`. This decouples the public streaming site from the internal CMS, ensuring that sudden traffic spikes on the viewer won't affect editors, and complex DB schema updates won't break the frontend.
+**Where this choice bites us:** Data staleness. The viewer only sees what was explicitly published during the last job run. If a critical typo needs fixing, the editor must run the entire publish job again. Additionally, storing the entire catalogue in a single JSON file works for an MVP, but as the library grows, the JSON payload becomes massive, leading to slow client downloads and parsing overhead.
 
 ### Atomic Publishing & Crash Behavior
-When publishing, the backend creates a temporary `.tmp` file, writes the JSON, and then uses `os.replace()` to atomically swap the file to `catalogue.json`.
-- **Failure before promotion:** The `.tmp` file is discarded or overwritten next time; the public catalogue remains perfectly intact on the previous version.
-- **Failure after promotion:** It succeeds. `os.replace` guarantees that the viewer never reads a partially written file, even under heavy concurrency.
+When publishing, the backend creates a temporary `.tmp` file, writes the JSON payload into it, and then uses `os.replace()` to atomically swap the file to `catalogue.json`.
+- **Failure before promotion:** If the process dies mid-publish (e.g., OOM kill while writing the JSON), the `.tmp` file is either discarded by the OS or safely overwritten on the next run. The public catalogue remains perfectly intact on the previous version.
+- **Failure after promotion:** Impossible to fail halfway. `os.replace` guarantees that the viewer never reads a partially written file, even under heavy concurrency.
 
 ### Search Implementation & Scaling Limitation
 The `GET /catalog/search` endpoint reads `catalogue.json` into memory and performs an iterative `AND` filter over the data structure.
-**Limitation:** Loading the entire JSON into Python memory for every request will not scale to tens of thousands of shows/episodes.
-**Trade-offs:** We skipped Elasticsearch or PostgreSQL Full-Text Search to reduce infrastructure complexity for this MVP, optimizing for development speed.
+**Limitation:** Loading the entire JSON into Python memory for every request stops working at roughly tens of thousands of shows/episodes, as memory usage will spike and iterative search becomes too slow (O(N) time complexity).
+**What to do next:** We should migrate search to a dedicated index like Elasticsearch or Algolia, or push the published data into a fast, read-only NoSQL document store (like DynamoDB or MongoDB) that supports native querying and indexing.
 
 ### Storage Abstraction & R2 Migration
 Artwork uploads utilize a `BaseStorage` abstraction (`LocalDiskStorage`). If we migrate to Cloudflare R2 or AWS S3, we simply write an `S3Storage` class inheriting the base abstraction, inject it into the router, and zero application logic needs to change.

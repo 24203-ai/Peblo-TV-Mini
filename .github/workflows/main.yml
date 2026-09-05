@@ -54,3 +54,10 @@ jobs:
         
     - name: Test Docker Compose build
       run: docker compose build
+      
+    - name: Deploy (Mock)
+      run: |
+        echo "In a real-world scenario, this step would push the built Docker images to a container registry (e.g., AWS ECR or GitHub Packages)."
+        echo "Then, it would trigger a deployment to an orchestration platform like AWS ECS, Kubernetes, or a PaaS like Render."
+        echo "For this take-home challenge, deployment is mocked."
+
