@@ -30,7 +30,7 @@ def login_access_token(
     
     return {
         "access_token": create_access_token(
-            user.id, expires_delta=access_token_expires
+            user.id, expires_delta=access_token_expires, extra_claims={"role": user.role}
         ),
         "token_type": "bearer",
         "role": user.role,

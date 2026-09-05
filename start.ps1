@@ -1,0 +1,7 @@
+Start-Process powershell -ArgumentList "-NoExit -Command `"cd backend; .venv\Scripts\activate; uvicorn app.main:app --reload --port 8000`""
+Start-Process powershell -ArgumentList "-NoExit -Command `"cd frontend\cms; npm run dev`""
+Start-Process powershell -ArgumentList "-NoExit -Command `"cd frontend\viewer; npm run dev`""
+Write-Host "Applications started in separate windows!"
+Write-Host "Backend API Docs: http://localhost:8000/docs"
+Write-Host "CMS Dashboard: http://localhost:5173"
+Write-Host "Viewer App: http://localhost:5174"
