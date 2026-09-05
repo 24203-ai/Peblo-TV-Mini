@@ -27,8 +27,12 @@ def main():
 
     # 3. Load seed data
     seed_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "seed_shows.json")
-    with open(seed_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with open(seed_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        print(f"Warning: Seed data file not found at {seed_path}. Skipping show/episode seeding.")
+        return
 
     # 4. Insert data
     # To keep the seed idempotent based on titles, we'll keep a cache
