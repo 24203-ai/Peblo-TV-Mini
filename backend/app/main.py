@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from app.api import shows, seasons, episodes, artwork, publish, catalog
+from app.api import auth, shows, seasons, episodes, artwork, publish, catalog
 import os
 
 app = FastAPI(
@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+app.include_router(auth.router, prefix="/admin/auth", tags=["auth"])
 app.include_router(shows.router, prefix="/admin/shows", tags=["shows"])
 app.include_router(seasons.router, prefix="/admin/seasons", tags=["seasons"])
 app.include_router(episodes.router, prefix="/admin/episodes", tags=["episodes"])

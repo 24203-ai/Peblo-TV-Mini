@@ -1,8 +1,16 @@
-import { Outlet, Link } from 'react-router-dom';
-
-import { LayoutDashboard, Tv, UploadCloud } from 'lucide-react';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import { LogOut, LayoutDashboard, Tv, UploadCloud } from 'lucide-react';
 
 export const Layout = () => {
+  const { setToken } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setToken(null);
+    navigate('/login');
+  };
+
   return (
     <div className="app-container">
       <nav className="sidebar">
@@ -24,6 +32,9 @@ export const Layout = () => {
           </Link>
         </div>
 
+        <button onClick={handleLogout} className="btn btn-danger" style={{ justifyContent: 'flex-start' }}>
+          <LogOut size={18} /> Logout
+        </button>
       </nav>
       
       <main className="main-content">

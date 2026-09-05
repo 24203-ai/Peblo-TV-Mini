@@ -7,7 +7,8 @@ from app.db.database import SessionLocal
 from app.models.show import Show
 from app.models.season import Season
 from app.models.episode import Episode
- # Wait, I haven't implemented this yet!
+from app.models.user import User
+from app.core.security import get_password_hash # Wait, I haven't implemented this yet!
 
 def main():
     db = SessionLocal()
@@ -16,6 +17,12 @@ def main():
     db.query(Episode).delete()
     db.query(Season).delete()
     db.query(Show).delete()
+    db.query(User).delete()
+    db.commit()
+
+    admin = User(id="admin_1", username="admin", hashed_password=get_password_hash("admin123"), role="admin")
+    editor = User(id="editor_1", username="editor", hashed_password=get_password_hash("editor123"), role="editor")
+    db.add_all([admin, editor])
     db.commit()
 
     # 3. Load seed data

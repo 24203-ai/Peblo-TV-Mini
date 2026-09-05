@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.artwork import Artwork
-
+from app.api.deps import get_current_user
 from app.services.storage import get_storage
 from app.services.validation import validate_artwork
 from pydantic import BaseModel
@@ -36,7 +36,8 @@ async def upload_artwork(
     entity_id: str = Form(...),
     type: str = Form(...),
     file: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     # Save uploaded file to temp path
     suffix = os.path.splitext(file.filename)[1] if file.filename else ""
