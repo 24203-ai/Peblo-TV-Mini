@@ -1,6 +1,6 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 
-import { LogOut, LayoutDashboard, Tv, UploadCloud } from 'lucide-react';
+import { LayoutDashboard, Tv, UploadCloud } from 'lucide-react';
 
 export const Layout = () => {
   return (
