@@ -5,14 +5,14 @@ services:
     image: postgres:15
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 24203@IIITU.ac.in
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: peblo_mini
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -23,7 +23,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://postgres:24203%40IIITU.ac.in@db:5432/peblo_mini
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/peblo_mini
     depends_on:
       db:
         condition: service_healthy
@@ -33,6 +33,8 @@ services:
   cms:
     build:
       context: ./frontend/cms
+      args:
+        VITE_API_URL: https://literate-space-rotary-phone-jj6pr9qgx4pj3p6j9-8000.app.github.dev/admin
     ports:
       - "3000:80"
     depends_on:
