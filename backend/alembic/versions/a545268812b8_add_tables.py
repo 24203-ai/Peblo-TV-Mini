@@ -31,14 +31,14 @@ def upgrade() -> None:
     sa.Column('height', sa.Integer(), nullable=False),
     sa.Column('file_size_bytes', sa.Integer(), nullable=False),
     sa.Column('content_type', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('entity_type', 'entity_id', 'type', name='uq_entity_artwork_type')
     )
     op.create_table('publishrun',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('initiated_by', sa.String(), nullable=False),
-    sa.Column('started_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('started_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('completed_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('status', sa.String(), nullable=False),
     sa.Column('counts', sa.JSON(), nullable=True),
@@ -51,7 +51,7 @@ def upgrade() -> None:
     sa.Column('synopsis', sa.String(), nullable=True),
     sa.Column('section', sa.String(), nullable=True),
     sa.Column('status', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
@@ -69,7 +69,7 @@ def upgrade() -> None:
     sa.Column('show_id', sa.String(), nullable=False),
     sa.Column('season_number', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['show_id'], ['show.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -84,7 +84,7 @@ def upgrade() -> None:
     sa.Column('content_group', sa.String(), nullable=False),
     sa.Column('category', sa.String(), nullable=True),
     sa.Column('status', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['season_id'], ['season.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),

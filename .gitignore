@@ -26,3 +26,4 @@ assets/catalogue.json
 
 # Backend generated/runtime assets
 backend/assets/
+*.db

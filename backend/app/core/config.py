@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Peblo TV Mini API"
     
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/peblo_tv"
+    DATABASE_URL: str = "sqlite:///./peblo_mini.db"
 
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
