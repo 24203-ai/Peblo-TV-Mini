@@ -23,6 +23,7 @@ def main():
     admin = User(id="admin_1", username="admin", hashed_password=get_password_hash("admin123"), role="admin")
     editor = User(id="editor_1", username="editor", hashed_password=get_password_hash("editor123"), role="editor")
     db.add_all([admin, editor])
+    db.commit()
 
     # 3. Load seed data
     seed_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "seed_shows.json")
